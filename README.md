@@ -6,7 +6,7 @@ Android Ninja, Full Stack Developer, Internet Lover
 
 | Profile | Activity | Top languages (by repo size) |
 |---------|----------|-------------------------------|
-| 📦 **23** public repos | 🔥 **7** commits this year | ![Java](https://img.shields.io/static/v1?style=flat-square&label=%E2%A0%80&color=555&labelColor=%23b07219&message=Java%2024.1%25) |
+| 📦 **23** public repos | 🔥 **214** commits (last 365d) | ![Java](https://img.shields.io/static/v1?style=flat-square&label=%E2%A0%80&color=555&labelColor=%23b07219&message=Java%2024.1%25) |
 | 👥 **171** followers | 🔀 **6** PRs this year | ![Python](https://img.shields.io/static/v1?style=flat-square&label=%E2%A0%80&color=555&labelColor=%233572A5&message=Python%2023.9%25) |
 | ⭐ **3,004** stars earned | | ![C++](https://img.shields.io/static/v1?style=flat-square&label=%E2%A0%80&color=555&labelColor=%23f34b7d&message=C%2B%2B%2023.7%25) |
 | 📍 New Delhi | | ![TypeScript](https://img.shields.io/static/v1?style=flat-square&label=%E2%A0%80&color=555&labelColor=%233178c6&message=TypeScript%209.9%25) |

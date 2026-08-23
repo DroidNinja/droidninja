@@ -31,14 +31,13 @@ LANG_COLORS = {
 }
 
 QUERY = """
-query($login: String!) {
+query($login: String!, $since: GitTimestamp!) {
   user(login: $login) {
     name
     bio
     location
     followers { totalCount }
     contributionsCollection {
-      totalCommitContributions
       totalPullRequestContributions
     }
     repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {
@@ -52,6 +51,13 @@ query($login: String!) {
         primaryLanguage { name }
         languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
           edges { size node { name } }
+        }
+        defaultBranchRef {
+          target {
+            ... on Commit {
+              history(since: $since) { totalCount }
+            }
+          }
         }
       }
     }
@@ -83,11 +89,18 @@ def shields_badge(lang, pct):
 
 
 def main():
-    data = graphql(QUERY, {"login": USERNAME})
+    cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=ACTIVE_WINDOW_DAYS)
+    since = cutoff.isoformat().replace("+00:00", "Z")
+    data = graphql(QUERY, {"login": USERNAME, "since": since})
     user = data["user"]
     repos = [r for r in user["repositories"]["nodes"] if not r["isArchived"]]
 
-    cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=ACTIVE_WINDOW_DAYS)
+    def commit_count(repo):
+        ref = repo["defaultBranchRef"]
+        return ref["target"]["history"]["totalCount"] if ref else 0
+
+    total_commits = sum(commit_count(r) for r in repos)
+
     active = sorted(
         (r for r in repos if datetime.datetime.fromisoformat(r["pushedAt"].replace("Z", "+00:00")) >= cutoff),
         key=lambda r: r["pushedAt"],
@@ -126,7 +139,7 @@ def main():
 
 | Profile | Activity | Top languages (by repo size) |
 |---------|----------|-------------------------------|
-| 📦 **{user['repositories']['totalCount']}** public repos | 🔥 **{contrib['totalCommitContributions']}** commits this year | {lang_badges[0]} |
+| 📦 **{user['repositories']['totalCount']}** public repos | 🔥 **{total_commits}** commits (last {ACTIVE_WINDOW_DAYS}d) | {lang_badges[0]} |
 | 👥 **{user['followers']['totalCount']}** followers | 🔀 **{contrib['totalPullRequestContributions']}** PRs this year | {lang_badges[1]} |
 | ⭐ **{total_stars:,}** stars earned | | {lang_badges[2]} |
 | 📍 {user['location'] or ''} | | {lang_badges[3]} |
